@@ -26,6 +26,12 @@
   Previous contributions by Eric Lowry, Jim Schimpf and Tom Harkaway
   * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+/**
+ * @todo Make Bounce2 more abstract. Split it from the hardware layer.
+ * @body Remove deboucing code from Bounce2 and make a new Debounce class from that code. Bounce2 should extend Debounce. 
+ */
+
+
 #ifndef Bounce2_h
 #define Bounce2_h
 
@@ -63,6 +69,10 @@
      Example of two instances of the Bounce class that switches the debug LED when either one of the two buttons is pressed.
  */
 
+static const uint8_t DEBOUNCED_STATE = 0b00000001;
+static const uint8_t UNSTABLE_STATE  = 0b00000010;
+static const uint8_t CHANGED_STATE   = 0b00000100;
+
 /**
      The Bounce class.
      */
@@ -90,7 +100,6 @@ class Bounce
               The pin that is to be debounced.
     @param    mode
               A valid Arduino pin mode (INPUT, INPUT_PULLUP or OUTPUT).
-    @return True if the event read was successful, otherwise false.
 */
     void attach(int pin, int mode);
 
@@ -195,6 +204,10 @@ class Bounce
     inline void unsetStateFlag(const uint8_t flag)  {state &= ~flag;}
     inline void toggleStateFlag(const uint8_t flag) {state ^= flag;}
     inline bool getStateFlag(const uint8_t flag)    {return((state & flag) != 0);}
+ 
+  public:
+    bool changed( ) { return getStateFlag(CHANGED_STATE); }
+
 };
 
 #endif
